@@ -101,17 +101,30 @@ services:
       - kong-net
     # volumes:
     #   - kong_data:/var/lib/postgresql/data
-
-  konga-prepare:
-    container_name: konga-prepare
-    image: pantsel/konga:latest
-    command: "-c prepare -a postgres -u postgresql://kong:kong@db:5432/konga_db"
+  
+  konga_db:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: konga_db
+      POSTGRES_USER: kong
+      POSTGRES_PASSWORD: kong
+    
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "kong"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+    restart: on-failure
+    deploy:
+      restart_policy:
+        condition: on-failure
+    expose:
+      - "5433"
+    ports:
+      - "5433:5433"
     networks:
       - kong-net
-    restart: on-failure
-    depends_on:
-      - db
-
+  
   konga:
     container_name: konga
     image: pantsel/konga:latest
@@ -120,9 +133,10 @@ services:
       - kong-net
     environment:
       DB_ADAPTER: postgres
-      DB_HOST: db
+      DB_HOST: konga_db
       DB_USER: kong
       DB_PASSWORD: kong
+      DB_PORT: 5433
       TOKEN_SECRET: ahfdjgjgf79JKLFHJKh978953kgdfjkl
       DB_DATABASE: konga_db
       NODE_ENV: production
