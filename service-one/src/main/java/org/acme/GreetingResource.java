@@ -1,16 +1,23 @@
 package org.acme;
 
+import java.util.Map;
+
+import io.vertx.core.json.Json;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
-@Path("/hello")
+@Path("/one")
 public class GreetingResource {
 
     @GET
-    @Produces(MediaType.TEXT_PLAIN)
-    public String hello() {
-        return "Hello from RESTEasy Reactive";
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response hello() {
+        var jsonData = Map.of("message", "Quarkus Service One🧁");
+
+        return Response.ok(Json.encodePrettily(jsonData)).build();
     }
+    
 }
