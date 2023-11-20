@@ -1,8 +1,5 @@
 version: "3.7"
 
-volumes:
-  kong_data: {}
-
 services:
   kong-migrations:
     image: "kong:2.3.2-alpine"
@@ -86,8 +83,6 @@ services:
     stdin_open: true
     tty: true
     network_mode: host
-    # volumes:
-    #   - kong_data:/var/lib/postgresql/data
   konga-prepare:
     container_name: konga-prepare
     image: pantsel/konga:latest
