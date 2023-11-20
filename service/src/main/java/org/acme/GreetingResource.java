@@ -1,8 +1,7 @@
 package org.acme;
 
-import java.util.Map;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
-import io.vertx.core.json.Json;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -12,12 +11,13 @@ import jakarta.ws.rs.core.Response;
 @Path("/one")
 public class GreetingResource {
 
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response hello() {
-        var jsonData = Map.of("message", "Quarkus Service One🧁");
+    @ConfigProperty(name = "service-name", defaultValue = "One")
+    String serviceName;
 
-        return Response.ok(Json.encodePrettily(jsonData)).build();
+    @GET
+    @Produces(MediaType.TEXT_HTML)
+    public Response hello() {
+        return Response.ok("Quarkus Service ".concat(serviceName).concat("🧁")).build();
     }
-    
+
 }
